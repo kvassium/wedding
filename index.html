@@ -72,8 +72,8 @@ body{background:#fff;color:#1a1a1a;font-family:'Raleway',sans-serif;font-weight:
 }
 
 /* TIMING */
-.timing{background:#fff;padding:64px 24px;text-align:center}
-.section-title{font-family:'Cormorant Garamond',serif;font-weight:300;font-size:36px;letter-spacing:0.25em;color:#1a1a1a;text-transform:uppercase;margin-bottom:48px}
+.timing{background:#fff;padding:36px 24px;text-align:center}
+.section-title{font-family:'Cormorant Garamond',serif;font-weight:300;font-size:36px;letter-spacing:0.25em;color:#1a1a1a;text-transform:uppercase;margin-bottom:28px}
 .timeline{max-width:280px;margin:0 auto}
 .tl-time{font-family:'Cormorant Garamond',serif;font-weight:300;font-size:52px;letter-spacing:0.03em;color:#1a1a1a;line-height:1}
 .tl-label{font-size:11px;letter-spacing:0.22em;text-transform:uppercase;color:#555;margin-top:6px;font-family:'Raleway',sans-serif}
@@ -244,9 +244,22 @@ body{background:#fff;color:#1a1a1a;font-family:'Raleway',sans-serif;font-weight:
 </footer>
 
 <script>
-function sendRSVP(){
+async function sendRSVP(){
   var name=document.getElementById('rName').value.trim();
   if(!name){document.getElementById('rName').focus();return}
+  var attend=document.querySelector('input[name=att]:checked').value;
+  var btn=document.querySelector('.btn-send');
+  btn.disabled=true;
+  btn.textContent='Отправляем...';
+  var emoji=attend==='yes'?'✅':'❌';
+  var text=emoji+' Гость: '+name+(attend==='yes'?' — будет на свадьбе!':' — не сможет прийти');
+  try{
+    await fetch('https://api.telegram.org/bot8620371545:AAEMw2TWolgADFxboQU6MzL8rkBM_hdRCc8/sendMessage',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({chat_id:'8620371545',text:text})
+    });
+  }catch(e){console.log('TG error',e)}
   document.getElementById('rsvpForm').style.display='none';
   document.getElementById('rsvpOk').style.display='block';
 }
